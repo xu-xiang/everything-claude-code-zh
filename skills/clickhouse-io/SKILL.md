@@ -1,26 +1,26 @@
 ---
 name: clickhouse-io
-description: ClickHouse database patterns, query optimization, analytics, and data engineering best practices for high-performance analytical workloads.
+description: ClickHouse 数据库模式、查询优化、分析以及针对高性能分析工作负载的数据工程最佳实践。
 ---
 
-# ClickHouse Analytics Patterns
+# ClickHouse 分析模式
 
-ClickHouse-specific patterns for high-performance analytics and data engineering.
+针对高性能分析和数据工程的 ClickHouse 特定模式。
 
-## Overview
+## 概览
 
-ClickHouse is a column-oriented database management system (DBMS) for online analytical processing (OLAP). It's optimized for fast analytical queries on large datasets.
+ClickHouse 是一款用于联机分析处理（OLAP）的列式数据库管理系统（DBMS）。它针对大规模数据集上的快速分析查询进行了优化。
 
-**Key Features:**
-- Column-oriented storage
-- Data compression
-- Parallel query execution
-- Distributed queries
-- Real-time analytics
+**核心特性：**
+- 列式存储
+- 数据压缩
+- 并行查询执行
+- 分布式查询
+- 实时分析
 
-## Table Design Patterns
+## 表设计模式
 
-### MergeTree Engine (Most Common)
+### MergeTree 引擎（最常用）
 
 ```sql
 CREATE TABLE markets_analytics (
@@ -38,10 +38,10 @@ ORDER BY (date, market_id)
 SETTINGS index_granularity = 8192;
 ```
 
-### ReplacingMergeTree (Deduplication)
+### ReplacingMergeTree（去重）
 
 ```sql
--- For data that may have duplicates (e.g., from multiple sources)
+-- 针对可能存在重复的数据（例如来自多个源）
 CREATE TABLE user_events (
     event_id String,
     user_id String,
@@ -54,10 +54,10 @@ ORDER BY (user_id, event_id, timestamp)
 PRIMARY KEY (user_id, event_id);
 ```
 
-### AggregatingMergeTree (Pre-aggregation)
+### AggregatingMergeTree（预聚合）
 
 ```sql
--- For maintaining aggregated metrics
+-- 用于维护聚合指标
 CREATE TABLE market_stats_hourly (
     hour DateTime,
     market_id String,
@@ -68,7 +68,7 @@ CREATE TABLE market_stats_hourly (
 PARTITION BY toYYYYMM(hour)
 ORDER BY (hour, market_id);
 
--- Query aggregated data
+-- 查询聚合数据
 SELECT
     hour,
     market_id,
@@ -81,12 +81,12 @@ GROUP BY hour, market_id
 ORDER BY hour DESC;
 ```
 
-## Query Optimization Patterns
+## 查询优化模式
 
-### Efficient Filtering
+### 高效过滤
 
 ```sql
--- ✅ GOOD: Use indexed columns first
+-- ✅ 推荐：优先使用索引列
 SELECT *
 FROM markets_analytics
 WHERE date >= '2025-01-01'
@@ -95,7 +95,7 @@ WHERE date >= '2025-01-01'
 ORDER BY date DESC
 LIMIT 100;
 
--- ❌ BAD: Filter on non-indexed columns first
+-- ❌ 不推荐：优先过滤非索引列
 SELECT *
 FROM markets_analytics
 WHERE volume > 1000
@@ -103,10 +103,10 @@ WHERE volume > 1000
   AND date >= '2025-01-01';
 ```
 
-### Aggregations
+### 聚合
 
 ```sql
--- ✅ GOOD: Use ClickHouse-specific aggregation functions
+-- ✅ 推荐：使用 ClickHouse 特有的聚合函数
 SELECT
     toStartOfDay(created_at) AS day,
     market_id,
@@ -119,7 +119,7 @@ WHERE created_at >= today() - INTERVAL 7 DAY
 GROUP BY day, market_id
 ORDER BY day DESC, total_volume DESC;
 
--- ✅ Use quantile for percentiles (more efficient than percentile)
+-- ✅ 使用 quantile 计算分位数（比 percentile 更高效）
 SELECT
     quantile(0.50)(trade_size) AS median,
     quantile(0.95)(trade_size) AS p95,
@@ -128,10 +128,10 @@ FROM trades
 WHERE created_at >= now() - INTERVAL 1 HOUR;
 ```
 
-### Window Functions
+### 窗口函数
 
 ```sql
--- Calculate running totals
+-- 计算累计总量
 SELECT
     date,
     market_id,
@@ -146,9 +146,9 @@ WHERE date >= today() - INTERVAL 30 DAY
 ORDER BY market_id, date;
 ```
 
-## Data Insertion Patterns
+## 数据插入模式
 
-### Bulk Insert (Recommended)
+### 批量插入（推荐）
 
 ```typescript
 import { ClickHouse } from 'clickhouse'
@@ -162,7 +162,7 @@ const clickhouse = new ClickHouse({
   }
 })
 
-// ✅ Batch insert (efficient)
+// ✅ 批量插入（高效）
 async function bulkInsertTrades(trades: Trade[]) {
   const values = trades.map(trade => `(
     '${trade.id}',
@@ -178,19 +178,19 @@ async function bulkInsertTrades(trades: Trade[]) {
   `).toPromise()
 }
 
-// ❌ Individual inserts (slow)
+// ❌ 逐条插入（缓慢）
 async function insertTrade(trade: Trade) {
-  // Don't do this in a loop!
+  // 不要循环执行此操作！
   await clickhouse.query(`
     INSERT INTO trades VALUES ('${trade.id}', ...)
   `).toPromise()
 }
 ```
 
-### Streaming Insert
+### 流式插入
 
 ```typescript
-// For continuous data ingestion
+// 用于持续的数据摄取
 import { createWriteStream } from 'fs'
 import { pipeline } from 'stream/promises'
 
@@ -205,12 +205,12 @@ async function streamInserts() {
 }
 ```
 
-## Materialized Views
+## 物化视图（Materialized Views）
 
-### Real-time Aggregations
+### 实时聚合
 
 ```sql
--- Create materialized view for hourly stats
+-- 为每小时统计创建物化视图
 CREATE MATERIALIZED VIEW market_stats_hourly_mv
 TO market_stats_hourly
 AS SELECT
@@ -222,7 +222,7 @@ AS SELECT
 FROM trades
 GROUP BY hour, market_id;
 
--- Query the materialized view
+-- 查询物化视图
 SELECT
     hour,
     market_id,
@@ -234,12 +234,12 @@ WHERE hour >= now() - INTERVAL 24 HOUR
 GROUP BY hour, market_id;
 ```
 
-## Performance Monitoring
+## 性能监控
 
-### Query Performance
+### 查询性能
 
 ```sql
--- Check slow queries
+-- 检查慢查询
 SELECT
     query_id,
     user,
@@ -256,10 +256,10 @@ ORDER BY query_duration_ms DESC
 LIMIT 10;
 ```
 
-### Table Statistics
+### 表统计信息
 
 ```sql
--- Check table sizes
+-- 检查表大小
 SELECT
     database,
     table,
@@ -272,12 +272,12 @@ GROUP BY database, table
 ORDER BY sum(bytes) DESC;
 ```
 
-## Common Analytics Queries
+## 常用分析查询
 
-### Time Series Analysis
+### 时间序列分析
 
 ```sql
--- Daily active users
+-- 日活跃用户数
 SELECT
     toDate(timestamp) AS date,
     uniq(user_id) AS daily_active_users
@@ -286,7 +286,7 @@ WHERE timestamp >= today() - INTERVAL 30 DAY
 GROUP BY date
 ORDER BY date;
 
--- Retention analysis
+-- 留存分析
 SELECT
     signup_date,
     countIf(days_since_signup = 0) AS day_0,
@@ -306,10 +306,10 @@ GROUP BY signup_date
 ORDER BY signup_date DESC;
 ```
 
-### Funnel Analysis
+### 漏斗分析
 
 ```sql
--- Conversion funnel
+-- 转化漏斗
 SELECT
     countIf(step = 'viewed_market') AS viewed,
     countIf(step = 'clicked_trade') AS clicked,
@@ -327,10 +327,10 @@ FROM (
 GROUP BY session_id;
 ```
 
-### Cohort Analysis
+### 队列分析（Cohort Analysis）
 
 ```sql
--- User cohorts by signup month
+-- 按注册月份划分的用户队列
 SELECT
     toStartOfMonth(signup_date) AS cohort,
     toStartOfMonth(activity_date) AS month,
@@ -347,17 +347,17 @@ GROUP BY cohort, month, months_since_signup
 ORDER BY cohort, months_since_signup;
 ```
 
-## Data Pipeline Patterns
+## 数据流水线（Data Pipeline）模式
 
-### ETL Pattern
+### ETL 模式
 
 ```typescript
-// Extract, Transform, Load
+// 抽取（Extract）、转换（Transform）、加载（Load）
 async function etlPipeline() {
-  // 1. Extract from source
+  // 1. 从源端抽取
   const rawData = await extractFromPostgres()
 
-  // 2. Transform
+  // 2. 转换
   const transformed = rawData.map(row => ({
     date: new Date(row.created_at).toISOString().split('T')[0],
     market_id: row.market_slug,
@@ -365,18 +365,18 @@ async function etlPipeline() {
     trades: parseInt(row.trade_count)
   }))
 
-  // 3. Load to ClickHouse
+  // 3. 加载到 ClickHouse
   await bulkInsertToClickHouse(transformed)
 }
 
-// Run periodically
-setInterval(etlPipeline, 60 * 60 * 1000)  // Every hour
+// 定期运行
+setInterval(etlPipeline, 60 * 60 * 1000)  // 每小时
 ```
 
-### Change Data Capture (CDC)
+### 变更数据捕获（CDC）
 
 ```typescript
-// Listen to PostgreSQL changes and sync to ClickHouse
+// 监听 PostgreSQL 变更并同步到 ClickHouse
 import { Client } from 'pg'
 
 const pgClient = new Client({ connectionString: process.env.DATABASE_URL })
@@ -397,33 +397,33 @@ pgClient.on('notification', async (msg) => {
 })
 ```
 
-## Best Practices
+## 最佳实践
 
-### 1. Partitioning Strategy
-- Partition by time (usually month or day)
-- Avoid too many partitions (performance impact)
-- Use DATE type for partition key
+### 1. 分区策略
+- 按时间分区（通常是按月或按天）
+- 避免分区过多（会影响性能）
+- 分区键使用 DATE 类型
 
-### 2. Ordering Key
-- Put most frequently filtered columns first
-- Consider cardinality (high cardinality first)
-- Order impacts compression
+### 2. 排序键（Ordering Key）
+- 将最常过滤的列放在前面
+- 考虑基数（高基数列放在前面）
+- 排序会影响压缩效果
 
-### 3. Data Types
-- Use smallest appropriate type (UInt32 vs UInt64)
-- Use LowCardinality for repeated strings
-- Use Enum for categorical data
+### 3. 数据类型
+- 使用最合适的最小类型（如 UInt32 而非 UInt64）
+- 对重复字符串使用 LowCardinality
+- 对类别数据使用 Enum
 
-### 4. Avoid
-- SELECT * (specify columns)
-- FINAL (merge data before query instead)
-- Too many JOINs (denormalize for analytics)
-- Small frequent inserts (batch instead)
+### 4. 避免事项
+- SELECT *（应指定具体列）
+- FINAL（应改为在查询前合并数据）
+- 过多的 JOIN 操作（针对分析场景应进行反规范化）
+- 小额频繁插入（应改为批量插入）
 
-### 5. Monitoring
-- Track query performance
-- Monitor disk usage
-- Check merge operations
-- Review slow query log
+### 5. 监控
+- 追踪查询性能
+- 监控磁盘使用情况
+- 检查合并（merge）操作
+- 审查慢查询日志
 
-**Remember**: ClickHouse excels at analytical workloads. Design tables for your query patterns, batch inserts, and leverage materialized views for real-time aggregations.
+**记住**：ClickHouse 擅长处理分析型工作负载。请根据查询模式设计表结构，采用批量插入，并利用物化视图进行实时聚合。

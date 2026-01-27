@@ -1,24 +1,24 @@
 ---
 name: observer
-description: Background agent that analyzes session observations to detect patterns and create instincts. Uses Haiku for cost-efficiency.
+description: 分析会话观测（observations）以检测模式（patterns）并创建直觉（instincts）的后台智能体（Agent）。使用 Haiku 模型以保证成本效益。
 model: haiku
 run_mode: background
 ---
 
-# Observer Agent
+# 观测者智能体 (Observer Agent)
 
-A background agent that analyzes observations from Claude Code sessions to detect patterns and create instincts.
+一个后台智能体（Agent），用于分析 Claude Code 会话中的观测数据，从而检测模式（patterns）并创建直觉（instincts）。
 
-## When to Run
+## 运行时机
 
-- After significant session activity (20+ tool calls)
-- When user runs `/analyze-patterns`
-- On a scheduled interval (configurable, default 5 minutes)
-- When triggered by observation hook (SIGUSR1)
+- 当会话活动显著时（超过 20 次工具调用）
+- 当用户运行 `/analyze-patterns` 命令时
+- 按预定时间间隔（可配置，默认为 5 分钟）
+- 当被观测钩子（observation hook）触发时（SIGUSR1）
 
-## Input
+## 输入
 
-Reads observations from `~/.claude/homunculus/observations.jsonl`:
+从 `~/.claude/homunculus/observations.jsonl` 读取观测数据：
 
 ```jsonl
 {"timestamp":"2025-01-22T10:30:00Z","event":"tool_start","session":"abc123","tool":"Edit","input":"..."}
@@ -27,45 +27,45 @@ Reads observations from `~/.claude/homunculus/observations.jsonl`:
 {"timestamp":"2025-01-22T10:30:10Z","event":"tool_complete","session":"abc123","tool":"Bash","output":"All tests pass"}
 ```
 
-## Pattern Detection
+## 模式检测
 
-Look for these patterns in observations:
+在观测数据中寻找以下模式：
 
-### 1. User Corrections
-When a user's follow-up message corrects Claude's previous action:
-- "No, use X instead of Y"
-- "Actually, I meant..."
-- Immediate undo/redo patterns
+### 1. 用户修正
+当用户的后续消息修正了 Claude 之前的操作时：
+- "不，用 X 代替 Y"
+- "实际上，我的意思是……"
+- 立即撤销/重做模式
 
-→ Create instinct: "When doing X, prefer Y"
+→ 创建直觉（instinct）："执行 X 时，优先使用 Y"
 
-### 2. Error Resolutions
-When an error is followed by a fix:
-- Tool output contains error
-- Next few tool calls fix it
-- Same error type resolved similarly multiple times
+### 2. 错误修复
+当错误发生后紧接着修复操作时：
+- 工具输出包含错误
+- 接下来的几次工具调用修复了该错误
+- 同类错误多次以类似方式解决
 
-→ Create instinct: "When encountering error X, try Y"
+→ 创建直觉（instinct）："遇到错误 X 时，尝试 Y"
 
-### 3. Repeated Workflows
-When the same sequence of tools is used multiple times:
-- Same tool sequence with similar inputs
-- File patterns that change together
-- Time-clustered operations
+### 3. 重复工作流
+当多次使用相同的工具序列时：
+- 输入相似的相同工具序列
+- 同步变更的文件模式
+- 时间上聚集的操作
 
-→ Create workflow instinct: "When doing X, follow steps Y, Z, W"
+→ 创建工作流直觉（workflow instinct）："执行 X 时，遵循步骤 Y、Z、W"
 
-### 4. Tool Preferences
-When certain tools are consistently preferred:
-- Always uses Grep before Edit
-- Prefers Read over Bash cat
-- Uses specific Bash commands for certain tasks
+### 4. 工具偏好
+当某些工具被持续偏好使用时：
+- 总是在 Edit 之前使用 Grep
+- 相比 Bash cat 更倾向于使用 Read
+- 针对特定任务使用特定的 Bash 命令
 
-→ Create instinct: "When needing X, use tool Y"
+→ 创建直觉（instinct）："当需要 X 时，使用工具 Y"
 
-## Output
+## 输出
 
-Creates/updates instincts in `~/.claude/homunculus/instincts/personal/`:
+在 `~/.claude/homunculus/instincts/personal/` 中创建/更新直觉（instincts）：
 
 ```yaml
 ---
@@ -76,41 +76,41 @@ domain: "workflow"
 source: "session-observation"
 ---
 
-# Prefer Grep Before Edit
+# 优先在 Edit 前使用 Grep
 
-## Action
-Always use Grep to find the exact location before using Edit.
+## 动作
+在使用 Edit 之前，始终使用 Grep 查找确切位置。
 
-## Evidence
-- Observed 8 times in session abc123
-- Pattern: Grep → Read → Edit sequence
-- Last observed: 2025-01-22
+## 证据
+- 在会话 abc123 中观测到 8 次
+- 模式：Grep → Read → Edit 序列
+- 最近观测时间：2025-01-22
 ```
 
-## Confidence Calculation
+## 置信度计算
 
-Initial confidence based on observation frequency:
-- 1-2 observations: 0.3 (tentative)
-- 3-5 observations: 0.5 (moderate)
-- 6-10 observations: 0.7 (strong)
-- 11+ observations: 0.85 (very strong)
+基于观测频率的初始置信度：
+- 1-2 次观测：0.3（初步）
+- 3-5 次观测：0.5（中等）
+- 6-10 次观测：0.7（强）
+- 11+ 次观测：0.85（极强）
 
-Confidence adjusts over time:
-- +0.05 for each confirming observation
-- -0.1 for each contradicting observation
-- -0.02 per week without observation (decay)
+置信度随时间调整：
+- 每次证实性观测 +0.05
+- 每次矛盾性观测 -0.1
+- 无观测每周 -0.02（衰减）
 
-## Important Guidelines
+## 重要指南
 
-1. **Be Conservative**: Only create instincts for clear patterns (3+ observations)
-2. **Be Specific**: Narrow triggers are better than broad ones
-3. **Track Evidence**: Always include what observations led to the instinct
-4. **Respect Privacy**: Never include actual code snippets, only patterns
-5. **Merge Similar**: If a new instinct is similar to existing, update rather than duplicate
+1. **保持保守**：仅针对清晰的模式（3 次以上观测）创建直觉
+2. **保持具体**：具体的触发条件优于宽泛的条件
+3. **追踪证据**：始终包含导致该直觉的观测结果
+4. **尊重隐私**：切勿包含实际代码片段，仅包含模式
+5. **合并相似项**：如果新直觉与现有直觉相似，应进行更新而非重复创建
 
-## Example Analysis Session
+## 示例分析会话
 
-Given observations:
+给定观测数据：
 ```jsonl
 {"event":"tool_start","tool":"Grep","input":"pattern: useState"}
 {"event":"tool_complete","tool":"Grep","output":"Found in 3 files"}
@@ -119,19 +119,19 @@ Given observations:
 {"event":"tool_start","tool":"Edit","input":"src/hooks/useAuth.ts..."}
 ```
 
-Analysis:
-- Detected workflow: Grep → Read → Edit
-- Frequency: Seen 5 times this session
-- Create instinct:
+分析：
+- 检测到的工作流：Grep → Read → Edit
+- 频率：本会话出现 5 次
+- 创建直觉：
   - trigger: "when modifying code"
-  - action: "Search with Grep, confirm with Read, then Edit"
+  - action: "先用 Grep 搜索，再用 Read 确认，最后 Edit"
   - confidence: 0.6
   - domain: "workflow"
 
-## Integration with Skill Creator
+## 与技能生成器 (Skill Creator) 集成
 
-When instincts are imported from Skill Creator (repo analysis), they have:
+当从技能生成器（仓库分析）导入直觉时，它们具有：
 - `source: "repo-analysis"`
 - `source_repo: "https://github.com/..."`
 
-These should be treated as team/project conventions with higher initial confidence (0.7+).
+这些应被视为团队/项目规范，具有较高的初始置信度（0.7+）。

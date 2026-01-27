@@ -1,120 +1,120 @@
-# Eval Command
+# 评测命令（Eval Command）
 
-Manage eval-driven development workflow.
+管理评测驱动开发（eval-driven development）工作流。
 
-## Usage
+## 用法（Usage）
 
 `/eval [define|check|report|list] [feature-name]`
 
-## Define Evals
+## 定义评测（Define Evals）
 
 `/eval define feature-name`
 
-Create a new eval definition:
+创建一个新的评测定义：
 
-1. Create `.claude/evals/feature-name.md` with template:
+1. 创建 `.claude/evals/feature-name.md` 文件，使用以下模板：
 
 ```markdown
 ## EVAL: feature-name
-Created: $(date)
+创建时间：$(date)
 
-### Capability Evals
-- [ ] [Description of capability 1]
-- [ ] [Description of capability 2]
+### 能力评测（Capability Evals）
+- [ ] [能力描述 1]
+- [ ] [能力描述 2]
 
-### Regression Evals
-- [ ] [Existing behavior 1 still works]
-- [ ] [Existing behavior 2 still works]
+### 回归评测（Regression Evals）
+- [ ] [现有行为 1 仍然正常工作]
+- [ ] [现有行为 2 仍然正常工作]
 
-### Success Criteria
-- pass@3 > 90% for capability evals
-- pass^3 = 100% for regression evals
+### 通过准则（Success Criteria）
+- 能力评测（capability evals）的 pass@3 > 90%
+- 回归评测（regression evals）的 pass^3 = 100%
 ```
 
-2. Prompt user to fill in specific criteria
+2. 提示用户填写具体准则。
 
-## Check Evals
+## 检查评测（Check Evals）
 
 `/eval check feature-name`
 
-Run evals for a feature:
+运行特定功能的评测：
 
-1. Read eval definition from `.claude/evals/feature-name.md`
-2. For each capability eval:
-   - Attempt to verify criterion
-   - Record PASS/FAIL
-   - Log attempt in `.claude/evals/feature-name.log`
-3. For each regression eval:
-   - Run relevant tests
-   - Compare against baseline
-   - Record PASS/FAIL
-4. Report current status:
+1. 从 `.claude/evals/feature-name.md` 读取评测定义。
+2. 对于每一项能力评测：
+   - 尝试验证准则。
+   - 记录 PASS/FAIL。
+   - 在 `.claude/evals/feature-name.log` 中记录尝试日志。
+3. 对于每一项回归评测：
+   - 运行相关测试。
+   - 与基准（baseline）进行对比。
+   - 记录 PASS/FAIL。
+4. 报告当前状态：
 
 ```
 EVAL CHECK: feature-name
 ========================
-Capability: X/Y passing
-Regression: X/Y passing
-Status: IN PROGRESS / READY
+能力（Capability）: X/Y 通过
+回归（Regression）: X/Y 通过
+状态（Status）: 进行中（IN PROGRESS）/ 已就绪（READY）
 ```
 
-## Report Evals
+## 生成报告（Report Evals）
 
 `/eval report feature-name`
 
-Generate comprehensive eval report:
+生成完整的评测报告：
 
 ```
 EVAL REPORT: feature-name
 =========================
-Generated: $(date)
+生成时间：$(date)
 
-CAPABILITY EVALS
+能力评测（CAPABILITY EVALS）
 ----------------
 [eval-1]: PASS (pass@1)
-[eval-2]: PASS (pass@2) - required retry
-[eval-3]: FAIL - see notes
+[eval-2]: PASS (pass@2) - 需重试
+[eval-3]: FAIL - 见备注
 
-REGRESSION EVALS
+回归评测（REGRESSION EVALS）
 ----------------
 [test-1]: PASS
 [test-2]: PASS
 [test-3]: PASS
 
-METRICS
+指标（METRICS）
 -------
-Capability pass@1: 67%
-Capability pass@3: 100%
-Regression pass^3: 100%
+能力 pass@1: 67%
+能力 pass@3: 100%
+回归 pass^3: 100%
 
-NOTES
+备注（NOTES）
 -----
-[Any issues, edge cases, or observations]
+[任何问题、边界情况或观察结果]
 
-RECOMMENDATION
+建议（RECOMMENDATION）
 --------------
-[SHIP / NEEDS WORK / BLOCKED]
+[可发布（SHIP）/ 需改进（NEEDS WORK）/ 阻塞（BLOCKED）]
 ```
 
-## List Evals
+## 列出评测（List Evals）
 
 `/eval list`
 
-Show all eval definitions:
+显示所有评测定义：
 
 ```
 EVAL DEFINITIONS
 ================
-feature-auth      [3/5 passing] IN PROGRESS
-feature-search    [5/5 passing] READY
-feature-export    [0/4 passing] NOT STARTED
+feature-auth      [3/5 通过] 进行中（IN PROGRESS）
+feature-search    [5/5 通过] 已就绪（READY）
+feature-export    [0/4 通过] 未开始（NOT STARTED）
 ```
 
-## Arguments
+## 参数（Arguments）
 
 $ARGUMENTS:
-- `define <name>` - Create new eval definition
-- `check <name>` - Run and check evals
-- `report <name>` - Generate full report
-- `list` - Show all evals
-- `clean` - Remove old eval logs (keeps last 10 runs)
+- `define <name>` - 创建新的评测定义。
+- `check <name>` - 运行并检查评测。
+- `report <name>` - 生成完整报告。
+- `list` - 显示所有评测。
+- `clean` - 清除旧的评测日志（保留最近 10 次运行记录）。

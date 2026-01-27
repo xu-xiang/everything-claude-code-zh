@@ -1,43 +1,43 @@
 ---
 name: golang-testing
-description: Go testing patterns including table-driven tests, subtests, benchmarks, fuzzing, and test coverage. Follows TDD methodology with idiomatic Go practices.
+description: Go 测试模式，包括表格驱动测试、子测试、基准测试、模糊测试和测试覆盖率。遵循测试驱动开发（TDD）方法论及地道的 Go 语言实践。
 ---
 
-# Go Testing Patterns
+# Go 测试模式 (Go Testing Patterns)
 
-Comprehensive Go testing patterns for writing reliable, maintainable tests following TDD methodology.
+遵循测试驱动开发（TDD）方法论，编写可靠且易于维护的 Go 测试模式指南。
 
-## When to Activate
+## 激活场景 (When to Activate)
 
-- Writing new Go functions or methods
-- Adding test coverage to existing code
-- Creating benchmarks for performance-critical code
-- Implementing fuzz tests for input validation
-- Following TDD workflow in Go projects
+- 编写新的 Go 函数或方法时
+- 为现有代码增加测试覆盖率时
+- 为性能关键型代码创建基准测试时
+- 为输入验证实现模糊测试时
+- 在 Go 项目中遵循 TDD 工作流时
 
-## TDD Workflow for Go
+## Go 的测试驱动开发 (TDD) 工作流
 
-### The RED-GREEN-REFACTOR Cycle
+### 红-绿-重构 (RED-GREEN-REFACTOR) 循环
 
 ```
-RED     → Write a failing test first
-GREEN   → Write minimal code to pass the test
-REFACTOR → Improve code while keeping tests green
-REPEAT  → Continue with next requirement
+红色 (RED)      → 先写一个失败的测试
+绿色 (GREEN)    → 编写最少的代码使测试通过
+重构 (REFACTOR) → 在保持测试通过的前提下优化代码
+重复 (REPEAT)   → 继续处理下一个需求
 ```
 
-### Step-by-Step TDD in Go
+### Go 中 TDD 的具体步骤
 
 ```go
-// Step 1: Define the interface/signature
+// 第 1 步：定义接口/签名
 // calculator.go
 package calculator
 
 func Add(a, b int) int {
-    panic("not implemented") // Placeholder
+    panic("not implemented") // 占位符
 }
 
-// Step 2: Write failing test (RED)
+// 第 2 步：编写失败的测试 (RED)
 // calculator_test.go
 package calculator
 
@@ -51,26 +51,26 @@ func TestAdd(t *testing.T) {
     }
 }
 
-// Step 3: Run test - verify FAIL
+// 第 3 步：运行测试 - 验证失败 (FAIL)
 // $ go test
 // --- FAIL: TestAdd (0.00s)
 // panic: not implemented
 
-// Step 4: Implement minimal code (GREEN)
+// 第 4 步：实现最简代码 (GREEN)
 func Add(a, b int) int {
     return a + b
 }
 
-// Step 5: Run test - verify PASS
+// 第 5 步：运行测试 - 验证通过 (PASS)
 // $ go test
 // PASS
 
-// Step 6: Refactor if needed, verify tests still pass
+// 第 6 步：根据需要进行重构，并验证测试依然通过
 ```
 
-## Table-Driven Tests
+## 表格驱动测试 (Table-Driven Tests)
 
-The standard pattern for Go tests. Enables comprehensive coverage with minimal code.
+Go 测试的标准模式。允许用最少的代码实现全面的覆盖。
 
 ```go
 func TestAdd(t *testing.T) {
@@ -98,7 +98,7 @@ func TestAdd(t *testing.T) {
 }
 ```
 
-### Table-Driven Tests with Error Cases
+### 包含错误情况的表格驱动测试
 
 ```go
 func TestParseConfig(t *testing.T) {
@@ -126,7 +126,7 @@ func TestParseConfig(t *testing.T) {
         {
             name:  "minimal config",
             input: `{}`,
-            want:  &Config{}, // Zero value config
+            want:  &Config{}, // 零值配置
         },
     }
 
@@ -153,13 +153,13 @@ func TestParseConfig(t *testing.T) {
 }
 ```
 
-## Subtests and Sub-benchmarks
+## 子测试与子基准测试 (Subtests and Sub-benchmarks)
 
-### Organizing Related Tests
+### 组织相关的测试
 
 ```go
 func TestUser(t *testing.T) {
-    // Setup shared by all subtests
+    // 所有子测试共享的设置
     db := setupTestDB(t)
 
     t.Run("Create", func(t *testing.T) {
@@ -193,7 +193,7 @@ func TestUser(t *testing.T) {
 }
 ```
 
-### Parallel Subtests
+### 并行子测试
 
 ```go
 func TestParallel(t *testing.T) {
@@ -207,36 +207,36 @@ func TestParallel(t *testing.T) {
     }
 
     for _, tt := range tests {
-        tt := tt // Capture range variable
+        tt := tt // 捕获循环变量
         t.Run(tt.name, func(t *testing.T) {
-            t.Parallel() // Run subtests in parallel
+            t.Parallel() // 并行运行子测试
             result := Process(tt.input)
-            // assertions...
+            // 断言...
             _ = result
         })
     }
 }
 ```
 
-## Test Helpers
+## 测试助手 (Test Helpers)
 
-### Helper Functions
+### 助手函数
 
 ```go
 func setupTestDB(t *testing.T) *sql.DB {
-    t.Helper() // Marks this as a helper function
+    t.Helper() // 标记为助手函数
 
     db, err := sql.Open("sqlite3", ":memory:")
     if err != nil {
         t.Fatalf("failed to open database: %v", err)
     }
 
-    // Cleanup when test finishes
+    // 测试结束时进行清理
     t.Cleanup(func() {
         db.Close()
     })
 
-    // Run migrations
+    // 运行迁移
     if _, err := db.Exec(schema); err != nil {
         t.Fatalf("failed to create schema: %v", err)
     }
@@ -259,34 +259,34 @@ func assertEqual[T comparable](t *testing.T, got, want T) {
 }
 ```
 
-### Temporary Files and Directories
+### 临时文件与目录
 
 ```go
 func TestFileProcessing(t *testing.T) {
-    // Create temp directory - automatically cleaned up
+    // 创建临时目录 - 会自动清理
     tmpDir := t.TempDir()
 
-    // Create test file
+    // 创建测试文件
     testFile := filepath.Join(tmpDir, "test.txt")
     err := os.WriteFile(testFile, []byte("test content"), 0644)
     if err != nil {
         t.Fatalf("failed to create test file: %v", err)
     }
 
-    // Run test
+    // 运行测试
     result, err := ProcessFile(testFile)
     if err != nil {
         t.Fatalf("ProcessFile failed: %v", err)
     }
 
-    // Assert...
+    // 断言...
     _ = result
 }
 ```
 
-## Golden Files
+## 黄金文件 (Golden Files)
 
-Testing against expected output files stored in `testdata/`.
+针对存储在 `testdata/` 中的预期输出文件进行测试。
 
 ```go
 var update = flag.Bool("update", false, "update golden files")
@@ -307,7 +307,7 @@ func TestRender(t *testing.T) {
             golden := filepath.Join("testdata", tt.name+".golden")
 
             if *update {
-                // Update golden file: go test -update
+                // 更新黄金文件：go test -update
                 err := os.WriteFile(golden, got, 0644)
                 if err != nil {
                     t.Fatalf("failed to update golden file: %v", err)
@@ -327,27 +327,27 @@ func TestRender(t *testing.T) {
 }
 ```
 
-## Mocking with Interfaces
+## 使用接口进行 Mock (Mocking with Interfaces)
 
-### Interface-Based Mocking
+### 基于接口的 Mocking
 
 ```go
-// Define interface for dependencies
+// 为依赖定义接口
 type UserRepository interface {
     GetUser(id string) (*User, error)
     SaveUser(user *User) error
 }
 
-// Production implementation
+// 生产环境实现
 type PostgresUserRepository struct {
     db *sql.DB
 }
 
 func (r *PostgresUserRepository) GetUser(id string) (*User, error) {
-    // Real database query
+    // 真实的数据库查询
 }
 
-// Mock implementation for tests
+// 用于测试的 Mock 实现
 type MockUserRepository struct {
     GetUserFunc  func(id string) (*User, error)
     SaveUserFunc func(user *User) error
@@ -361,7 +361,7 @@ func (m *MockUserRepository) SaveUser(user *User) error {
     return m.SaveUserFunc(user)
 }
 
-// Test using mock
+// 使用 mock 进行测试
 func TestUserService(t *testing.T) {
     mock := &MockUserRepository{
         GetUserFunc: func(id string) (*User, error) {
@@ -384,25 +384,25 @@ func TestUserService(t *testing.T) {
 }
 ```
 
-## Benchmarks
+## 基准测试 (Benchmarks)
 
-### Basic Benchmarks
+### 基础基准测试
 
 ```go
 func BenchmarkProcess(b *testing.B) {
     data := generateTestData(1000)
-    b.ResetTimer() // Don't count setup time
+    b.ResetTimer() // 不计入准备时间
 
     for i := 0; i < b.N; i++ {
         Process(data)
     }
 }
 
-// Run: go test -bench=BenchmarkProcess -benchmem
-// Output: BenchmarkProcess-8   10000   105234 ns/op   4096 B/op   10 allocs/op
+// 运行：go test -bench=BenchmarkProcess -benchmem
+// 输出：BenchmarkProcess-8   10000   105234 ns/op   4096 B/op   10 allocs/op
 ```
 
-### Benchmark with Different Sizes
+### 不同规模的基准测试
 
 ```go
 func BenchmarkSort(b *testing.B) {
@@ -414,7 +414,7 @@ func BenchmarkSort(b *testing.B) {
             b.ResetTimer()
 
             for i := 0; i < b.N; i++ {
-                // Make a copy to avoid sorting already sorted data
+                // 制作副本以避免对已排序数据进行排序
                 tmp := make([]int, len(data))
                 copy(tmp, data)
                 sort.Ints(tmp)
@@ -424,7 +424,7 @@ func BenchmarkSort(b *testing.B) {
 }
 ```
 
-### Memory Allocation Benchmarks
+### 内存分配基准测试
 
 ```go
 func BenchmarkStringConcat(b *testing.B) {
@@ -458,13 +458,13 @@ func BenchmarkStringConcat(b *testing.B) {
 }
 ```
 
-## Fuzzing (Go 1.18+)
+## 模糊测试 (Fuzzing) (Go 1.18+)
 
-### Basic Fuzz Test
+### 基础模糊测试
 
 ```go
 func FuzzParseJSON(f *testing.F) {
-    // Add seed corpus
+    // 添加种子语料库
     f.Add(`{"name": "test"}`)
     f.Add(`{"count": 123}`)
     f.Add(`[]`)
@@ -475,11 +475,11 @@ func FuzzParseJSON(f *testing.F) {
         err := json.Unmarshal([]byte(input), &result)
 
         if err != nil {
-            // Invalid JSON is expected for random input
+            // 随机输入产生无效 JSON 是符合预期的
             return
         }
 
-        // If parsing succeeded, re-encoding should work
+        // 如果解析成功，重新编码应该也能成功
         _, err = json.Marshal(result)
         if err != nil {
             t.Errorf("Marshal failed after successful Unmarshal: %v", err)
@@ -487,10 +487,10 @@ func FuzzParseJSON(f *testing.F) {
     })
 }
 
-// Run: go test -fuzz=FuzzParseJSON -fuzztime=30s
+// 运行：go test -fuzz=FuzzParseJSON -fuzztime=30s
 ```
 
-### Fuzz Test with Multiple Inputs
+### 多参数模糊测试
 
 ```go
 func FuzzCompare(f *testing.F) {
@@ -501,12 +501,12 @@ func FuzzCompare(f *testing.F) {
     f.Fuzz(func(t *testing.T, a, b string) {
         result := Compare(a, b)
 
-        // Property: Compare(a, a) should always equal 0
+        // 属性：Compare(a, a) 应该始终等于 0
         if a == b && result != 0 {
             t.Errorf("Compare(%q, %q) = %d; want 0", a, b, result)
         }
 
-        // Property: Compare(a, b) and Compare(b, a) should have opposite signs
+        // 属性：Compare(a, b) 和 Compare(b, a) 应该符号相反
         reverse := Compare(b, a)
         if (result > 0 && reverse >= 0) || (result < 0 && reverse <= 0) {
             if result != 0 || reverse != 0 {
@@ -518,57 +518,57 @@ func FuzzCompare(f *testing.F) {
 }
 ```
 
-## Test Coverage
+## 测试覆盖率 (Test Coverage)
 
-### Running Coverage
+### 运行覆盖率测试
 
 ```bash
-# Basic coverage
+# 基础覆盖率
 go test -cover ./...
 
-# Generate coverage profile
+# 生成覆盖率配置文件
 go test -coverprofile=coverage.out ./...
 
-# View coverage in browser
+# 在浏览器中查看覆盖率
 go tool cover -html=coverage.out
 
-# View coverage by function
+# 按函数查看覆盖率
 go tool cover -func=coverage.out
 
-# Coverage with race detection
+# 配合竞态检测运行覆盖率
 go test -race -coverprofile=coverage.out ./...
 ```
 
-### Coverage Targets
+### 覆盖率目标
 
-| Code Type | Target |
+| 代码类型 | 目标 |
 |-----------|--------|
-| Critical business logic | 100% |
-| Public APIs | 90%+ |
-| General code | 80%+ |
-| Generated code | Exclude |
+| 关键业务逻辑 | 100% |
+| 公共 API | 90%+ |
+| 通用代码 | 80%+ |
+| 生成的代码 | 排除 |
 
-### Excluding Generated Code from Coverage
+### 从覆盖率中排除生成的代码
 
 ```go
 //go:generate mockgen -source=interface.go -destination=mock_interface.go
 
-// In coverage profile, exclude with build tags:
+// 在覆盖率配置文件中，通过 build tags 排除：
 // go test -cover -tags=!generate ./...
 ```
 
-## HTTP Handler Testing
+## HTTP 处理函数测试 (HTTP Handler Testing)
 
 ```go
 func TestHealthHandler(t *testing.T) {
-    // Create request
+    // 创建请求
     req := httptest.NewRequest(http.MethodGet, "/health", nil)
     w := httptest.NewRecorder()
 
-    // Call handler
+    // 调用处理函数
     HealthHandler(w, req)
 
-    // Check response
+    // 检查响应
     resp := w.Result()
     defer resp.Body.Close()
 
@@ -640,65 +640,65 @@ func TestAPIHandler(t *testing.T) {
 }
 ```
 
-## Testing Commands
+## 测试常用命令
 
 ```bash
-# Run all tests
+# 运行所有测试
 go test ./...
 
-# Run tests with verbose output
+# 以详细输出运行测试
 go test -v ./...
 
-# Run specific test
+# 运行特定测试
 go test -run TestAdd ./...
 
-# Run tests matching pattern
+# 运行符合模式的测试
 go test -run "TestUser/Create" ./...
 
-# Run tests with race detector
+# 开启竞态检测运行测试
 go test -race ./...
 
-# Run tests with coverage
+# 运行测试并查看覆盖率
 go test -cover -coverprofile=coverage.out ./...
 
-# Run short tests only
+# 仅运行短测试
 go test -short ./...
 
-# Run tests with timeout
+# 设置超时时间运行测试
 go test -timeout 30s ./...
 
-# Run benchmarks
+# 运行基准测试
 go test -bench=. -benchmem ./...
 
-# Run fuzzing
+# 运行模糊测试
 go test -fuzz=FuzzParse -fuzztime=30s ./...
 
-# Count test runs (for flaky test detection)
+# 多次运行测试（用于检测不稳定测试）
 go test -count=10 ./...
 ```
 
-## Best Practices
+## 最佳实践 (Best Practices)
 
-**DO:**
-- Write tests FIRST (TDD)
-- Use table-driven tests for comprehensive coverage
-- Test behavior, not implementation
-- Use `t.Helper()` in helper functions
-- Use `t.Parallel()` for independent tests
-- Clean up resources with `t.Cleanup()`
-- Use meaningful test names that describe the scenario
+**推荐做法 (DO):**
+- 测试先行 (TDD)
+- 使用表格驱动测试以实现全面覆盖
+- 测试行为而非实现
+- 在助手函数中使用 `t.Helper()`
+- 为独立的测试使用 `t.Parallel()`
+- 使用 `t.Cleanup()` 清理资源
+- 使用描述场景的、有意义的测试名称
 
-**DON'T:**
-- Test private functions directly (test through public API)
-- Use `time.Sleep()` in tests (use channels or conditions)
-- Ignore flaky tests (fix or remove them)
-- Mock everything (prefer integration tests when possible)
-- Skip error path testing
+**不推荐做法 (DON'T):**
+- 直接测试私有函数（应通过公共 API 测试）
+- 在测试中使用 `time.Sleep()`（应使用 channel 或条件变量）
+- 忽略不稳定的测试 (Flaky tests)（应修复或移除）
+- Mock 一切（尽可能优先使用集成测试）
+- 跳过错误路径的测试
 
-## Integration with CI/CD
+## 与 CI/CD 集成
 
 ```yaml
-# GitHub Actions example
+# GitHub Actions 示例
 test:
   runs-on: ubuntu-latest
   steps:
@@ -716,4 +716,4 @@ test:
         awk -F'%' '{if ($1 < 80) exit 1}'
 ```
 
-**Remember**: Tests are documentation. They show how your code is meant to be used. Write them clearly and keep them up to date.
+**请记住**：测试即文档。它们展示了代码的预期用法。请清晰地编写并保持更新。

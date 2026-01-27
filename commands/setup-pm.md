@@ -1,42 +1,42 @@
 ---
-description: Configure your preferred package manager (npm/pnpm/yarn/bun)
+description: 配置你偏好的包管理器 (npm/pnpm/yarn/bun)
 disable-model-invocation: true
 ---
 
-# Package Manager Setup
+# 包管理器设置 (Package Manager Setup)
 
-Configure your preferred package manager for this project or globally.
+为本项目或全局配置你偏好的包管理器。
 
-## Usage
+## 用法 (Usage)
 
 ```bash
-# Detect current package manager
+# 检测当前包管理器
 node scripts/setup-package-manager.js --detect
 
-# Set global preference
+# 设置全局偏好
 node scripts/setup-package-manager.js --global pnpm
 
-# Set project preference
+# 设置项目偏好
 node scripts/setup-package-manager.js --project bun
 
-# List available package managers
+# 列出可用的包管理器
 node scripts/setup-package-manager.js --list
 ```
 
-## Detection Priority
+## 检测优先级 (Detection Priority)
 
-When determining which package manager to use, the following order is checked:
+在确定使用哪个包管理器时，将按以下顺序进行检查：
 
-1. **Environment variable**: `CLAUDE_PACKAGE_MANAGER`
-2. **Project config**: `.claude/package-manager.json`
-3. **package.json**: `packageManager` field
-4. **Lock file**: Presence of package-lock.json, yarn.lock, pnpm-lock.yaml, or bun.lockb
-5. **Global config**: `~/.claude/package-manager.json`
-6. **Fallback**: First available package manager (pnpm > bun > yarn > npm)
+1. **环境变量 (Environment variable)**: `CLAUDE_PACKAGE_MANAGER`
+2. **项目配置 (Project config)**: `.claude/package-manager.json`
+3. **package.json**: `packageManager` 字段
+4. **锁定文件 (Lock file)**: 是否存在 package-lock.json、yarn.lock、pnpm-lock.yaml 或 bun.lockb
+5. **全局配置 (Global config)**: `~/.claude/package-manager.json`
+6. **后备方案 (Fallback)**: 第一个可用的包管理器 (pnpm > bun > yarn > npm)
 
-## Configuration Files
+## 配置文件 (Configuration Files)
 
-### Global Configuration
+### 全局配置
 ```json
 // ~/.claude/package-manager.json
 {
@@ -44,7 +44,7 @@ When determining which package manager to use, the following order is checked:
 }
 ```
 
-### Project Configuration
+### 项目配置
 ```json
 // .claude/package-manager.json
 {
@@ -59,9 +59,9 @@ When determining which package manager to use, the following order is checked:
 }
 ```
 
-## Environment Variable
+## 环境变量 (Environment Variable)
 
-Set `CLAUDE_PACKAGE_MANAGER` to override all other detection methods:
+设置 `CLAUDE_PACKAGE_MANAGER` 以覆盖所有其他检测方法：
 
 ```bash
 # Windows (PowerShell)
@@ -71,9 +71,9 @@ $env:CLAUDE_PACKAGE_MANAGER = "pnpm"
 export CLAUDE_PACKAGE_MANAGER=pnpm
 ```
 
-## Run the Detection
+## 运行检测 (Run the Detection)
 
-To see current package manager detection results, run:
+若要查看当前的包管理器检测结果，请运行：
 
 ```bash
 node scripts/setup-package-manager.js --detect

@@ -1,70 +1,70 @@
-# /learn - Extract Reusable Patterns
+# /learn - 提取可复用模式（Patterns）
 
-Analyze the current session and extract any patterns worth saving as skills.
+分析当前会话（Session）并提取任何值得作为技能（Skills）保存的模式。
 
-## Trigger
+## 触发（Trigger）
 
-Run `/learn` at any point during a session when you've solved a non-trivial problem.
+在会话期间解决了一个非琐碎的问题后，可以随时运行 `/learn`。
 
-## What to Extract
+## 提取内容
 
-Look for:
+关注以下方面：
 
-1. **Error Resolution Patterns**
-   - What error occurred?
-   - What was the root cause?
-   - What fixed it?
-   - Is this reusable for similar errors?
+1. **错误解决模式（Error Resolution Patterns）**
+   - 发生了什么错误？
+   - 根本原因是什么？
+   - 如何修复的？
+   - 是否可用于解决类似的错误？
 
-2. **Debugging Techniques**
-   - Non-obvious debugging steps
-   - Tool combinations that worked
-   - Diagnostic patterns
+2. **调试技巧（Debugging Techniques）**
+   - 非显而易见的调试步骤
+   - 行之有效的工具组合
+   - 诊断模式
 
-3. **Workarounds**
-   - Library quirks
-   - API limitations
-   - Version-specific fixes
+3. **变通方法（Workarounds）**
+   - 库的奇特特性（Quirks）
+   - API 限制
+   - 特定版本的修复补丁
 
-4. **Project-Specific Patterns**
-   - Codebase conventions discovered
-   - Architecture decisions made
-   - Integration patterns
+4. **项目特定模式（Project-Specific Patterns）**
+   - 发现的代码库规范
+   - 做出的架构决策
+   - 集成模式
 
-## Output Format
+## 输出格式
 
-Create a skill file at `~/.claude/skills/learned/[pattern-name].md`:
+在 `~/.claude/skills/learned/[pattern-name].md` 路径下创建一个技能文件：
 
 ```markdown
-# [Descriptive Pattern Name]
+# [描述性的模式名称]
 
-**Extracted:** [Date]
-**Context:** [Brief description of when this applies]
+**提取日期:** [日期]
+**上下文:** [适用场景的简要描述]
 
-## Problem
-[What problem this solves - be specific]
+## 问题
+[该模式解决的问题 - 请具体描述]
 
-## Solution
-[The pattern/technique/workaround]
+## 解决方案
+[模式/技术/变通方法]
 
-## Example
-[Code example if applicable]
+## 示例
+[如果适用，请提供代码示例]
 
-## When to Use
-[Trigger conditions - what should activate this skill]
+## 何时使用
+[触发条件 - 什么情况下应激活此技能]
 ```
 
-## Process
+## 流程
 
-1. Review the session for extractable patterns
-2. Identify the most valuable/reusable insight
-3. Draft the skill file
-4. Ask user to confirm before saving
-5. Save to `~/.claude/skills/learned/`
+1. 回顾会话以寻找可提取的模式
+2. 识别最有价值/可复用的见解
+3. 起草技能文件
+4. 保存前请求用户确认
+5. 保存至 `~/.claude/skills/learned/`
 
-## Notes
+## 注意事项
 
-- Don't extract trivial fixes (typos, simple syntax errors)
-- Don't extract one-time issues (specific API outages, etc.)
-- Focus on patterns that will save time in future sessions
-- Keep skills focused - one pattern per skill
+- 不要提取琐碎的修复（如拼写错误、简单的语法错误）
+- 不要提取一次性问题（如特定的 API 故障等）
+- 专注于能在未来会话中节省时间的模式
+- 保持技能聚焦 —— 每个技能只包含一个模式

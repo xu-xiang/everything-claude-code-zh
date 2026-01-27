@@ -1,18 +1,18 @@
 ---
 name: frontend-patterns
-description: Frontend development patterns for React, Next.js, state management, performance optimization, and UI best practices.
+description: 涵盖 React、Next.js、状态管理、性能优化及 UI 最佳实践的前端开发模式（Frontend development patterns）。
 ---
 
-# Frontend Development Patterns
+# 前端开发模式（Frontend Development Patterns）
 
-Modern frontend patterns for React, Next.js, and performant user interfaces.
+适用于 React、Next.js 和高性能用户界面的现代前端开发模式。
 
-## Component Patterns
+## 组件模式（Component Patterns）
 
-### Composition Over Inheritance
+### 组合优于继承（Composition Over Inheritance）
 
 ```typescript
-// ✅ GOOD: Component composition
+// ✅ 推荐：组件组合
 interface CardProps {
   children: React.ReactNode
   variant?: 'default' | 'outlined'
@@ -30,14 +30,14 @@ export function CardBody({ children }: { children: React.ReactNode }) {
   return <div className="card-body">{children}</div>
 }
 
-// Usage
+// 使用示例
 <Card>
-  <CardHeader>Title</CardHeader>
-  <CardBody>Content</CardBody>
+  <CardHeader>标题</CardHeader>
+  <CardBody>内容</CardBody>
 </Card>
 ```
 
-### Compound Components
+### 复合组件（Compound Components）
 
 ```typescript
 interface TabsContextValue {
@@ -66,7 +66,7 @@ export function TabList({ children }: { children: React.ReactNode }) {
 
 export function Tab({ id, children }: { id: string, children: React.ReactNode }) {
   const context = useContext(TabsContext)
-  if (!context) throw new Error('Tab must be used within Tabs')
+  if (!context) throw new Error('Tab 必须在 Tabs 组件内使用')
 
   return (
     <button
@@ -78,16 +78,16 @@ export function Tab({ id, children }: { id: string, children: React.ReactNode })
   )
 }
 
-// Usage
+// 使用示例
 <Tabs defaultTab="overview">
   <TabList>
-    <Tab id="overview">Overview</Tab>
-    <Tab id="details">Details</Tab>
+    <Tab id="overview">概览</Tab>
+    <Tab id="details">详情</Tab>
   </TabList>
 </Tabs>
 ```
 
-### Render Props Pattern
+### 渲染属性模式（Render Props Pattern）
 
 ```typescript
 interface DataLoaderProps<T> {
@@ -111,7 +111,7 @@ export function DataLoader<T>({ url, children }: DataLoaderProps<T>) {
   return <>{children(data, loading, error)}</>
 }
 
-// Usage
+// 使用示例
 <DataLoader<Market[]> url="/api/markets">
   {(markets, loading, error) => {
     if (loading) return <Spinner />
@@ -121,9 +121,9 @@ export function DataLoader<T>({ url, children }: DataLoaderProps<T>) {
 </DataLoader>
 ```
 
-## Custom Hooks Patterns
+## 自定义 Hook 模式（Custom Hooks Patterns）
 
-### State Management Hook
+### 状态管理 Hook
 
 ```typescript
 export function useToggle(initialValue = false): [boolean, () => void] {
@@ -136,11 +136,11 @@ export function useToggle(initialValue = false): [boolean, () => void] {
   return [value, toggle]
 }
 
-// Usage
+// 使用示例
 const [isOpen, toggleOpen] = useToggle()
 ```
 
-### Async Data Fetching Hook
+### 异步数据获取 Hook
 
 ```typescript
 interface UseQueryOptions<T> {
@@ -184,18 +184,18 @@ export function useQuery<T>(
   return { data, error, loading, refetch }
 }
 
-// Usage
+// 使用示例
 const { data: markets, loading, error, refetch } = useQuery(
   'markets',
   () => fetch('/api/markets').then(r => r.json()),
   {
-    onSuccess: data => console.log('Fetched', data.length, 'markets'),
-    onError: err => console.error('Failed:', err)
+    onSuccess: data => console.log('已获取', data.length, '个市场数据'),
+    onError: err => console.error('获取失败:', err)
   }
 )
 ```
 
-### Debounce Hook
+### 防抖 Hook（Debounce Hook）
 
 ```typescript
 export function useDebounce<T>(value: T, delay: number): T {
@@ -212,7 +212,7 @@ export function useDebounce<T>(value: T, delay: number): T {
   return debouncedValue
 }
 
-// Usage
+// 使用示例
 const [searchQuery, setSearchQuery] = useState('')
 const debouncedQuery = useDebounce(searchQuery, 500)
 
@@ -223,9 +223,9 @@ useEffect(() => {
 }, [debouncedQuery])
 ```
 
-## State Management Patterns
+## 状态管理模式（State Management Patterns）
 
-### Context + Reducer Pattern
+### Context + Reducer 模式
 
 ```typescript
 interface State {
@@ -273,27 +273,27 @@ export function MarketProvider({ children }: { children: React.ReactNode }) {
 
 export function useMarkets() {
   const context = useContext(MarketContext)
-  if (!context) throw new Error('useMarkets must be used within MarketProvider')
+  if (!context) throw new Error('useMarkets 必须在 MarketProvider 内使用')
   return context
 }
 ```
 
-## Performance Optimization
+## 性能优化（Performance Optimization）
 
-### Memoization
+### 记忆化（Memoization）
 
 ```typescript
-// ✅ useMemo for expensive computations
+// ✅ 使用 useMemo 处理昂贵的计算
 const sortedMarkets = useMemo(() => {
   return markets.sort((a, b) => b.volume - a.volume)
 }, [markets])
 
-// ✅ useCallback for functions passed to children
+// ✅ 使用 useCallback 处理传递给子组件的函数
 const handleSearch = useCallback((query: string) => {
   setSearchQuery(query)
 }, [])
 
-// ✅ React.memo for pure components
+// ✅ 使用 React.memo 优化纯组件
 export const MarketCard = React.memo<MarketCardProps>(({ market }) => {
   return (
     <div className="market-card">
@@ -304,12 +304,12 @@ export const MarketCard = React.memo<MarketCardProps>(({ market }) => {
 })
 ```
 
-### Code Splitting & Lazy Loading
+### 代码分割与延迟加载（Code Splitting & Lazy Loading）
 
 ```typescript
 import { lazy, Suspense } from 'react'
 
-// ✅ Lazy load heavy components
+// ✅ 延迟加载（Lazy load）重型组件
 const HeavyChart = lazy(() => import('./HeavyChart'))
 const ThreeJsBackground = lazy(() => import('./ThreeJsBackground'))
 
@@ -328,7 +328,7 @@ export function Dashboard() {
 }
 ```
 
-### Virtualization for Long Lists
+### 长列表虚拟化（Virtualization for Long Lists）
 
 ```typescript
 import { useVirtualizer } from '@tanstack/react-virtual'
@@ -339,8 +339,8 @@ export function VirtualMarketList({ markets }: { markets: Market[] }) {
   const virtualizer = useVirtualizer({
     count: markets.length,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => 100,  // Estimated row height
-    overscan: 5  // Extra items to render
+    estimateSize: () => 100,  // 预估行高
+    overscan: 5  // 额外渲染的项目数量
   })
 
   return (
@@ -372,9 +372,9 @@ export function VirtualMarketList({ markets }: { markets: Market[] }) {
 }
 ```
 
-## Form Handling Patterns
+## 表单处理模式（Form Handling Patterns）
 
-### Controlled Form with Validation
+### 带验证的受控表单（Controlled Form with Validation）
 
 ```typescript
 interface FormData {
@@ -402,17 +402,17 @@ export function CreateMarketForm() {
     const newErrors: FormErrors = {}
 
     if (!formData.name.trim()) {
-      newErrors.name = 'Name is required'
+      newErrors.name = '名称是必填项'
     } else if (formData.name.length > 200) {
-      newErrors.name = 'Name must be under 200 characters'
+      newErrors.name = '名称长度必须在 200 个字符以内'
     }
 
     if (!formData.description.trim()) {
-      newErrors.description = 'Description is required'
+      newErrors.description = '描述是必填项'
     }
 
     if (!formData.endDate) {
-      newErrors.endDate = 'End date is required'
+      newErrors.endDate = '截止日期是必填项'
     }
 
     setErrors(newErrors)
@@ -426,9 +426,9 @@ export function CreateMarketForm() {
 
     try {
       await createMarket(formData)
-      // Success handling
+      // 成功处理
     } catch (error) {
-      // Error handling
+      // 错误处理
     }
   }
 
@@ -437,19 +437,19 @@ export function CreateMarketForm() {
       <input
         value={formData.name}
         onChange={e => setFormData(prev => ({ ...prev, name: e.target.value }))}
-        placeholder="Market name"
+        placeholder="市场名称"
       />
       {errors.name && <span className="error">{errors.name}</span>}
 
-      {/* Other fields */}
+      {/* 其他字段 */}
 
-      <button type="submit">Create Market</button>
+      <button type="submit">创建市场</button>
     </form>
   )
 }
 ```
 
-## Error Boundary Pattern
+## 错误边界模式（Error Boundary Pattern）
 
 ```typescript
 interface ErrorBoundaryState {
@@ -471,17 +471,17 @@ export class ErrorBoundary extends React.Component<
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error('Error boundary caught:', error, errorInfo)
+    console.error('错误边界捕获到异常:', error, errorInfo)
   }
 
   render() {
     if (this.state.hasError) {
       return (
         <div className="error-fallback">
-          <h2>Something went wrong</h2>
+          <h2>出错了</h2>
           <p>{this.state.error?.message}</p>
           <button onClick={() => this.setState({ hasError: false })}>
-            Try again
+            重试
           </button>
         </div>
       )
@@ -491,20 +491,20 @@ export class ErrorBoundary extends React.Component<
   }
 }
 
-// Usage
+// 使用示例
 <ErrorBoundary>
   <App />
 </ErrorBoundary>
 ```
 
-## Animation Patterns
+## 动画模式（Animation Patterns）
 
-### Framer Motion Animations
+### Framer Motion 动画
 
 ```typescript
 import { motion, AnimatePresence } from 'framer-motion'
 
-// ✅ List animations
+// ✅ 列表动画
 export function AnimatedMarketList({ markets }: { markets: Market[] }) {
   return (
     <AnimatePresence>
@@ -523,7 +523,7 @@ export function AnimatedMarketList({ markets }: { markets: Market[] }) {
   )
 }
 
-// ✅ Modal animations
+// ✅ 弹窗动画
 export function Modal({ isOpen, onClose, children }: ModalProps) {
   return (
     <AnimatePresence>
@@ -551,9 +551,9 @@ export function Modal({ isOpen, onClose, children }: ModalProps) {
 }
 ```
 
-## Accessibility Patterns
+## 可访问性模式（Accessibility Patterns）
 
-### Keyboard Navigation
+### 键盘导航
 
 ```typescript
 export function Dropdown({ options, onSelect }: DropdownProps) {
@@ -588,13 +588,13 @@ export function Dropdown({ options, onSelect }: DropdownProps) {
       aria-haspopup="listbox"
       onKeyDown={handleKeyDown}
     >
-      {/* Dropdown implementation */}
+      {/* 下拉菜单实现 */}
     </div>
   )
 }
 ```
 
-### Focus Management
+### 焦点管理（Focus Management）
 
 ```typescript
 export function Modal({ isOpen, onClose, children }: ModalProps) {
@@ -603,13 +603,13 @@ export function Modal({ isOpen, onClose, children }: ModalProps) {
 
   useEffect(() => {
     if (isOpen) {
-      // Save currently focused element
+      // 保存当前获取焦点的元素
       previousFocusRef.current = document.activeElement as HTMLElement
 
-      // Focus modal
+      // 让弹窗获取焦点
       modalRef.current?.focus()
     } else {
-      // Restore focus when closing
+      // 关闭时恢复焦点
       previousFocusRef.current?.focus()
     }
   }, [isOpen])
@@ -628,4 +628,4 @@ export function Modal({ isOpen, onClose, children }: ModalProps) {
 }
 ```
 
-**Remember**: Modern frontend patterns enable maintainable, performant user interfaces. Choose patterns that fit your project complexity.
+**请记住**：现代前端模式能够构建可维护、高性能的用户界面。请根据项目的复杂程度选择合适的模式。

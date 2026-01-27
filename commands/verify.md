@@ -1,39 +1,39 @@
-# Verification Command
+# 验证（Verification）命令
 
-Run comprehensive verification on current codebase state.
+对当前代码库状态进行全面验证。
 
-## Instructions
+## 指令（Instructions）
 
-Execute verification in this exact order:
+请按以下确切顺序执行验证：
 
-1. **Build Check**
-   - Run the build command for this project
-   - If it fails, report errors and STOP
+1. **构建检查（Build Check）**
+   - 运行此项目的构建命令
+   - 如果构建失败，报告错误并停止（STOP）
 
-2. **Type Check**
-   - Run TypeScript/type checker
-   - Report all errors with file:line
+2. **类型检查（Type Check）**
+   - 运行 TypeScript/类型检查器
+   - 报告所有错误及其对应的 `file:line`（文件:行号）
 
-3. **Lint Check**
-   - Run linter
-   - Report warnings and errors
+3. **代码规范检查（Lint Check）**
+   - 运行 Linter
+   - 报告警告与错误
 
-4. **Test Suite**
-   - Run all tests
-   - Report pass/fail count
-   - Report coverage percentage
+4. **测试套件（Test Suite）**
+   - 运行所有测试
+   - 报告通过/失败的数量
+   - 报告覆盖率百分比
 
-5. **Console.log Audit**
-   - Search for console.log in source files
-   - Report locations
+5. **Console.log 审计**
+   - 在源文件中搜索 `console.log`
+   - 报告其所在位置
 
-6. **Git Status**
-   - Show uncommitted changes
-   - Show files modified since last commit
+6. **Git 状态（Git Status）**
+   - 显示未提交的更改
+   - 显示自上次提交以来修改的文件
 
-## Output
+## 输出（Output）
 
-Produce a concise verification report:
+生成一份简洁的验证报告：
 
 ```
 VERIFICATION: [PASS/FAIL]
@@ -48,12 +48,12 @@ Logs:     [OK/X console.logs]
 Ready for PR: [YES/NO]
 ```
 
-If any critical issues, list them with fix suggestions.
+如果存在任何关键问题，请列出这些问题并给出修复建议。
 
-## Arguments
+## 参数（Arguments）
 
-$ARGUMENTS can be:
-- `quick` - Only build + types
-- `full` - All checks (default)
-- `pre-commit` - Checks relevant for commits
-- `pre-pr` - Full checks plus security scan
+`$ARGUMENTS` 可以是：
+- `quick` - 仅执行构建 + 类型检查
+- `full` - 执行所有检查（默认）
+- `pre-commit` - 执行与提交相关的检查
+- `pre-pr` - 执行完整检查以及安全扫描
