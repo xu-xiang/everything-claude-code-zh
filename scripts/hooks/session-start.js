@@ -8,7 +8,6 @@
  * files and notifies Claude of available context to load.
  */
 
-const path = require('path');
 const {
   getSessionsDir,
   getLearnedSkillsDir,

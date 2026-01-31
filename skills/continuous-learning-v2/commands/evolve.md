@@ -1,11 +1,11 @@
 ---
 name: evolve
-description: 将相关本能（Instincts）聚类为技能、命令或智能体
+description: 将相关本能 (Instincts) 聚类为技能 (Skills)、命令 (Commands) 或智能体 (Agents)
 command: /evolve
 implementation: python3 ~/.claude/skills/continuous-learning-v2/scripts/instinct-cli.py evolve
 ---
 
-# 演进（Evolve）命令
+# 演进 (Evolve) 命令
 
 ## 实现
 
@@ -13,23 +13,23 @@ implementation: python3 ~/.claude/skills/continuous-learning-v2/scripts/instinct
 python3 ~/.claude/skills/continuous-learning-v2/scripts/instinct-cli.py evolve [--generate]
 ```
 
-分析本能（Instincts）并将相关的本能聚类为更高级别的结构：
-- **命令（Commands）**：当本能描述的是用户调用的操作时
-- **技能（Skills）**：当本能描述的是自动触发的行为时
-- **智能体（Agents）**：当本能描述的是复杂的、多步骤的过程时
+分析本能 (Instincts) 并将相关的本能聚类为更高级别的结构：
+- **命令 (Commands)**：当本能描述的是用户调用的操作时
+- **技能 (Skills)**：当本能描述的是自动触发的行为时
+- **智能体 (Agents)**：当本能描述的是复杂的、多步骤的过程时
 
 ## 用法
 
 ```
 /evolve                    # 分析所有本能并建议演进方案
-/evolve --domain testing   # 仅演进测试领域（testing domain）中的本能
+/evolve --domain testing   # 仅演进测试领域 (testing domain) 中的本能
 /evolve --dry-run          # 显示将要创建的内容而不实际执行
 /evolve --threshold 5      # 要求 5 个或更多相关本能才进行聚类
 ```
 
 ## 演进规则
 
-### → 命令（Command，用户调用）
+### → 命令 (Command，用户调用)
 当本能描述用户会显式请求的操作时：
 - 多个关于“当用户要求...”的本能
 - 带有“在创建新的 X 时”等触发器的本能
@@ -42,7 +42,7 @@ python3 ~/.claude/skills/continuous-learning-v2/scripts/instinct-cli.py evolve [
 
 → 创建：`/new-table` 命令
 
-### → 技能（Skill，自动触发）
+### → 技能 (Skill，自动触发)
 当本能描述应该自动发生的行为时：
 - 模式匹配触发器
 - 错误处理响应
@@ -55,9 +55,9 @@ python3 ~/.claude/skills/continuous-learning-v2/scripts/instinct-cli.py evolve [
 
 → 创建：`functional-patterns` 技能
 
-### → 智能体（Agent，需要深度/隔离）
+### → 智能体 (Agent，需要深度/隔离)
 当本能描述受益于隔离的复杂、多步骤过程时：
-- 调试工作流（Workflow）
+- 调试工作流 (Workflow)
 - 重构序列
 - 研究任务
 
@@ -85,7 +85,7 @@ python3 ~/.claude/skills/continuous-learning-v2/scripts/instinct-cli.py evolve [
 ## 输出格式
 
 ```
-🧬 演进分析（Evolve Analysis）
+🧬 演进分析 (Evolve Analysis)
 ==================
 
 发现 3 个已准备好演进的聚类：
@@ -121,7 +121,7 @@ python3 ~/.claude/skills/continuous-learning-v2/scripts/instinct-cli.py evolve [
 运行 `/evolve --execute` 来创建这些文件。
 ```
 
-## 标志（Flags）
+## 标志 (Flags)
 
 - `--execute`：实际创建演进后的结构（默认为预览）
 - `--dry-run`：预览而不创建

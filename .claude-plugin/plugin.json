@@ -1,7 +1,7 @@
 {
   "name": "everything-claude-code",
-  "version": "1.0.0",
-  "description": "Complete collection of battle-tested Claude Code configs from an Anthropic hackathon winner - agents, skills, hooks, commands, and rules evolved over 10+ months of intensive daily use",
+  "version": "1.2.0",
+  "description": "Complete collection of battle-tested Claude Code configs from an Anthropic hackathon winner - agents, skills, hooks, and rules evolved over 10+ months of intensive daily use",
   "author": {
     "name": "Affaan Mustafa",
     "url": "https://x.com/affaanmustafa"
@@ -14,7 +14,6 @@
     "agents",
     "skills",
     "hooks",
-    "commands",
     "rules",
     "tdd",
     "code-review",
@@ -23,8 +22,7 @@
     "automation",
     "best-practices"
   ],
-  "commands": ["./commands/"],
-  "skills": ["./skills/"],
+  "skills": ["./skills/", "./commands/"],
   "agents": [
     "./agents/architect.md",
     "./agents/build-error-resolver.md",
@@ -38,6 +36,5 @@
     "./agents/refactor-cleaner.md",
     "./agents/security-reviewer.md",
     "./agents/tdd-guide.md"
-  ],
-  "hooks": "./hooks/hooks.json"
+  ]
 }
