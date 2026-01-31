@@ -49,7 +49,7 @@ git reset HEAD .
 # 逻辑：找出 upstream/main 里没有，但当前 HEAD (基于原 main) 里有的文件
 # 排除 translation_workdir, .git, .gitignore 等项目维护文件
 echo "   Cleaning up deleted files..."
-git diff --name-only --diff-filter=D upstream/main HEAD \
+git diff --name-only --diff-filter=A upstream/main HEAD \
   | grep -v "^${WORK_DIR}/" \
   | grep -v "^.git" \
   | grep -v "README.md" \
