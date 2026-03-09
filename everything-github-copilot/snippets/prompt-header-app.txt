@@ -1,0 +1,5 @@
+请严格遵循 rules/general-engineering-rules.md 和 rules/android-app-rules.md。
+优先最小改动，不做无关重构。
+保持现有用户可见行为不变。
+先分析，后修改。
+如果上下文不足，请先指出缺失信息。

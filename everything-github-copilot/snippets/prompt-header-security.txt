@@ -1,0 +1,3 @@
+请基于 checklists/android-security-checklist.md 进行审查。
+优先关注权限、输入校验、导出组件、敏感日志、数据泄露和身份边界。
+请按严重程度排序输出问题。
